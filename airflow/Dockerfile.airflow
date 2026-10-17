@@ -1,0 +1,14 @@
+FROM apache/airflow:2.9.3
+
+USER root
+# Install system packages maybe necessary for DVC or ML packages
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+         build-essential \
+  && apt-get autoremove -yqq --purge \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+
+USER airflow
+# Permanently install your packages into the Airflow image
+RUN pip install --no-cache-dir "apache-airflow==${AIRFLOW_VERSION}" pandas scikit-learn joblib matplotlib mlflow xgboost seaborn dvc[s3] google-genai

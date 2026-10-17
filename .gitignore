@@ -1,0 +1,32 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.idea/
+.vscode/
+.DS_Store
+
+# Environment and Logs
+.env
+*.log
+api_err.log
+api_out.log
+
+# DVC
+.dvc/cache/
+
+# MLflow
+mlruns/
+mlflow.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Assignment specific unnecessary files
+pdf_contents.txt
+read_pdfs.py
+ASG/
+
+# Data
+data/raw/

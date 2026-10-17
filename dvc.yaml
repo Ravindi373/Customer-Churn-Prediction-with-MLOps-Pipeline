@@ -1,0 +1,38 @@
+stages:
+  data_ingestion:
+    cmd: python src/data_ingestion.py --input data/raw/Churn_Prediction_DataSet.csv --report_out reports/data_quality_report.json
+    deps:
+      - src/data_ingestion.py
+      - data/raw/Churn_Prediction_DataSet.csv
+    outs:
+      - reports/data_quality_report.json
+
+  preprocessing:
+    cmd: python src/preprocessing.py --input data/raw/Churn_Prediction_DataSet.csv --outdir data/processed
+    deps:
+      - src/preprocessing.py
+      - data/raw/Churn_Prediction_DataSet.csv
+    outs:
+      - data/processed/train.csv
+      - data/processed/test.csv
+      - models/preprocessor.pkl
+      - models/feature_names.json
+
+  train:
+    cmd: python src/train.py --train data/processed/train.csv --model_out models/best_model.pkl
+    deps:
+      - src/train.py
+      - data/processed/train.csv
+    outs:
+      - models/best_model.pkl
+
+  evaluate:
+    cmd: python src/evaluate.py --test data/processed/test.csv --model models/best_model.pkl --outdir reports
+    deps:
+      - src/evaluate.py
+      - data/processed/test.csv
+      - models/best_model.pkl
+    outs:
+      - reports/metrics.json
+      - reports/confusion_matrix.png
+      - reports/roc_curve.png

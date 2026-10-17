@@ -1,0 +1,97 @@
+schema: '2.0'
+stages:
+  preprocessing:
+    cmd: python src/preprocessing.py --input 
+      data/raw/Churn_Prediction_DataSet.csv --outdir data/processed
+    deps:
+    - path: data/raw/Churn_Prediction_DataSet.csv
+      hash: md5
+      md5: 0f9de68e012bd3aed5fa7cdc9fc421af
+      size: 977501
+    - path: src/preprocessing.py
+      hash: md5
+      md5: 5688930f193e4b7ceb94047a868bcf39
+      size: 4452
+    outs:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 74c1949a86dba516813f9a70e7843f71
+      size: 348310
+    - path: data/processed/train.csv
+      hash: md5
+      md5: d62b1ea12a3143a1f72b2665438e74a9
+      size: 1389473
+    - path: models/feature_names.json
+      hash: md5
+      md5: a7a3f998a0e169f0b9a3d3dec179b5e8
+      size: 1220
+    - path: models/preprocessor.pkl
+      hash: md5
+      md5: 065f8b9d583a41c9f0df9de7e19ee5e2
+      size: 7444
+  train:
+    cmd: python src/train.py --train data/processed/train.csv --model_out 
+      models/best_model.pkl
+    deps:
+    - path: data/processed/train.csv
+      hash: md5
+      md5: d62b1ea12a3143a1f72b2665438e74a9
+      size: 1389473
+    - path: src/train.py
+      hash: md5
+      md5: 92d2a00a84cdda4b02ce354fbb434e99
+      size: 5049
+    outs:
+    - path: models/best_model.pkl
+      hash: md5
+      md5: 8f10c5153461bb9c5bbbd7f44b278c0d
+      size: 2511
+  evaluate:
+    cmd: python src/evaluate.py --test data/processed/test.csv --model 
+      models/best_model.pkl --outdir reports
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 74c1949a86dba516813f9a70e7843f71
+      size: 348310
+    - path: models/best_model.pkl
+      hash: md5
+      md5: 8f10c5153461bb9c5bbbd7f44b278c0d
+      size: 2511
+    - path: src/evaluate.py
+      hash: md5
+      md5: 2bb338ab02e7a838fbe24c148985ad8d
+      size: 3031
+    outs:
+    - path: reports/confusion_matrix.png
+      hash: md5
+      md5: 70b3242ad71068cb75dd6ba1906fdff8
+      size: 18216
+    - path: reports/metrics.json
+      hash: md5
+      md5: e6197b58bdbcb0a5cdd83e5a640d37a1
+      size: 186
+    - path: reports/roc_curve.png
+      hash: md5
+      md5: 09bb8ab3d0313b525eedaea5e1b25f8e
+      size: 32660
+  data_ingestion:
+    cmd: python src/data_ingestion.py --input 
+      data/raw/Churn_Prediction_DataSet.csv --report_out 
+      reports/data_quality_report.json
+    deps:
+    - path: data/raw/Churn_Prediction_DataSet.csv
+      hash: md5
+      md5: 0f9de68e012bd3aed5fa7cdc9fc421af
+      size: 977501
+      isexec: true
+    - path: src/data_ingestion.py
+      hash: md5
+      md5: 811a22030a5fb663c5dfddffd320a7a7
+      size: 2043
+      isexec: true
+    outs:
+    - path: reports/data_quality_report.json
+      hash: md5
+      md5: 00cbea20c487ff3b42229f9d8e456704
+      size: 2395

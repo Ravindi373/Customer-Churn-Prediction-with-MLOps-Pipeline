@@ -1,0 +1,12 @@
+{
+  "model_file": "/opt/airflow/project/models/best_model.pkl",
+  "registered_at": "2026-03-11 08:44:11",
+  "metrics": {
+    "accuracy": 0.7991483321504613,
+    "precision": 0.6444444444444445,
+    "recall": 0.5427807486631016,
+    "f1_score": 0.5892597968069666,
+    "roc_auc": 0.8423958252602753
+  },
+  "note": "Registered by Airflow DAG"
+}
