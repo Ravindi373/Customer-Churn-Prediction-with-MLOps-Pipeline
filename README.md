@@ -125,15 +125,13 @@ python src/evaluate.py --test data/processed/test.csv --model models/best_model.
 
 ## Results
 
-Three models are trained and compared. The best one is saved as `models/best_model.pkl`.
+Three models are trained and compared (Logistic Regression, Random Forest and XGBoost). The best one is saved as `models/best_model.pkl`.
 
-| Model | Accuracy | Precision | Recall | F1 | ROC-AUC |
-|-------|----------|-----------|--------|----|---------|
-| Logistic Regression | _fill in_ | _fill in_ | _fill in_ | _fill in_ | _fill in_ |
-| Random Forest | _fill in_ | _fill in_ | _fill in_ | _fill in_ | _fill in_ |
-| XGBoost | _fill in_ | _fill in_ | _fill in_ | _fill in_ | _fill in_ |
+| Best model | Accuracy | Precision | Recall | F1 | ROC-AUC |
+|------------|----------|-----------|--------|----|---------|
+| _model name_ | 0.799 | 0.644 | 0.543 | 0.589 | 0.842 |
 
-Fill in the numbers from `reports/metrics.json` and the MLflow UI.
+Per-model confusion matrices and ROC curves are in `reports/`.
 
 Per-model plots are in `reports/`:
 
