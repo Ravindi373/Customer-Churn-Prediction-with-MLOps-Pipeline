@@ -17,5 +17,3 @@ The simplest approach is to run Airflow with Docker Desktop.
    - user: airflow
    - pass: airflow
 
-## Goal
-Your DAG should run end-to-end and call scripts in `src/` (preprocessing, train, evaluate).
