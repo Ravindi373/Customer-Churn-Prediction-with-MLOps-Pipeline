@@ -30,3 +30,12 @@ ASG/
 
 # Data
 data/raw/
+
+# Airflow
+airflow/logs/
+airflow/*.db
+airflow/.env
+
+# Misc
+*.egg-info/
+.mypy_cache/

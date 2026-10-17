@@ -5,7 +5,8 @@ stages:
       - src/data_ingestion.py
       - data/raw/Churn_Prediction_DataSet.csv
     outs:
-      - reports/data_quality_report.json
+      - reports/data_quality_report.json:
+          cache: false
 
   preprocessing:
     cmd: python src/preprocessing.py --input data/raw/Churn_Prediction_DataSet.csv --outdir data/processed
@@ -33,6 +34,10 @@ stages:
       - data/processed/test.csv
       - models/best_model.pkl
     outs:
-      - reports/metrics.json
-      - reports/confusion_matrix.png
-      - reports/roc_curve.png
+      - reports/confusion_matrix.png:
+          cache: false
+      - reports/roc_curve.png:
+          cache: false
+    metrics:
+      - reports/metrics.json:
+          cache: false
