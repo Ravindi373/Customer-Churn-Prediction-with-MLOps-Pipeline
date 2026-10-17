@@ -131,7 +131,6 @@ Three models are trained and compared (Logistic Regression, Random Forest and XG
 |------------|----------|-----------|--------|----|---------|
 | _model name_ | 0.799 | 0.644 | 0.543 | 0.589 | 0.842 |
 
-Per-model confusion matrices and ROC curves are in `reports/`.
 
 Per-model plots are in `reports/`:
 
