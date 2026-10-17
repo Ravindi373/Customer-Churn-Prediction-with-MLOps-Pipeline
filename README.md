@@ -1,86 +1,173 @@
-# Churn MLOps Project
+# Customer Churn Prediction with MLOps Pipeline
 
-End-to-end customer churn prediction project with data validation, preprocessing, model training, evaluation, experiment tracking, orchestration, and API serving.
+End-to-end customer churn prediction project covering data validation, preprocessing, model training and comparison, evaluation, experiment tracking, workflow orchestration, and model serving through an API.
 
-## Implemented Components
+## Highlights
 
-- Data validation report generation from the raw churn dataset
-- Preprocessing pipeline with train/test split and saved preprocessing artifacts
-- Model comparison across Logistic Regression, Random Forest, and XGBoost
-- MLflow experiment logging for metrics, plots, and trained models
-- DVC pipeline for ingestion, preprocessing, training, and evaluation
-- Airflow DAG for orchestrating the full workflow
-- FastAPI inference service for churn prediction
-- Docker support for the API and Airflow services
+- **Data validation:** data quality report generated from the raw churn dataset
+- **Preprocessing:** train/test split with saved preprocessing artifacts
+- **Model comparison:** Logistic Regression, Random Forest and XGBoost
+- **Experiment tracking:** MLflow logs metrics, plots and trained models
+- **Reproducible pipeline:** DVC stages for ingestion, preprocessing, training and evaluation
+- **Orchestration:** Airflow DAG (`churn_mlops_end_to_end`) that runs the full workflow
+- **Serving:** FastAPI inference service with `/health` and `/predict`
+- **Containers:** Docker support for the API and Airflow
+
+## Architecture
+
+```
+Raw CSV --> Data ingestion/validation --> Preprocessing --> Training (3 models) --> Evaluation
+                                              |                    |                    |
+                                       preprocessor.pkl       best_model.pkl     metrics + plots
+                                                                   |
+                                                            FastAPI /predict
+
+DVC defines the stages | MLflow tracks the runs | Airflow orchestrates the DVC stages
+```
 
 ## Project Structure
 
-- `src/` - ingestion, preprocessing, training, and evaluation scripts
-- `api/` - FastAPI inference service and API-specific Docker setup
-- `airflow_dags/` - orchestration DAG and task wrappers
-- `airflow/` - Docker Compose configuration for Airflow
-- `data/raw/` - source dataset
-- `data/processed/` - transformed training and test datasets
-- `models/` - saved model, preprocessor, feature schema, and registry output
-- `reports/` - evaluation metrics, plots, and validation reports
+```
+ML-Final-Assignment/
+├── .dvc/                  # DVC configuration
+├── airflow/               # Docker Compose setup for Airflow
+│   └── docker-compose.airflow.yml
+├── airflow_dags/          # Orchestration DAG and task wrappers
+├── api/                   # FastAPI inference service
+│   ├── main.py
+│   └── Dockerfile.api     # API-specific Docker setup
+├── data/
+│   ├── raw/               # Source dataset (not tracked in Git)
+│   └── processed/         # Transformed train/test datasets (DVC output)
+├── models/                # Saved model, preprocessor, feature schema, registry output
+├── notebooks/             # Exploration notebooks
+├── reports/               # Evaluation metrics, plots and validation reports
+├── src/                   # Pipeline scripts
+│   ├── data_ingestion.py
+│   ├── preprocessing.py
+│   ├── train.py
+│   └── evaluate.py
+├── .dvcignore
+├── .env.example           # Template for required environment variables
+├── .gitignore
+├── Dockerfile
+├── dvc.lock
+├── dvc.yaml               # DVC pipeline definition
+├── requirements.txt
+├── test_api.py            # API test script
+└── README.md
+```
 
 ## Setup
 
-```bat
+```bash
 python -m venv venv
+
+# Windows
 venv\Scripts\activate
+# macOS / Linux
+source venv/bin/activate
+
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
+### Environment variables
+
+Copy `.env.example` to `.env` and fill in the values. The `.env` file is git-ignored.
+
+```
+GEMINI_API_KEY=your_key_here
+AIRFLOW_SECRET_KEY=change-me
+```
+
+`GEMINI_API_KEY` is read by the API from the environment and is never stored in the repository.
+
 ## Dataset
 
-Place the churn dataset at:
+The raw dataset is not stored in Git. Download it from the source below and place it at:
 
-```text
+```
 data/raw/Churn_Prediction_DataSet.csv
 ```
 
+> Dataset source: _add the download link here_
+
 ## Run the DVC Pipeline
 
-```bat
+```bash
 dvc repro
 ```
 
-This pipeline produces:
+This runs four stages in order: `data_ingestion`, `preprocessing`, `train`, `evaluate`. Outputs:
 
-- `reports/data_quality_report.json`
-- `data/processed/train.csv`
-- `data/processed/test.csv`
-- `models/preprocessor.pkl`
-- `models/feature_names.json`
-- `models/best_model.pkl`
-- `reports/metrics.json`
-- `reports/confusion_matrix.png`
-- `reports/roc_curve.png`
+| Stage | Outputs |
+|-------|---------|
+| `data_ingestion` | `reports/data_quality_report.json` |
+| `preprocessing` | `data/processed/train.csv`, `data/processed/test.csv`, `models/preprocessor.pkl`, `models/feature_names.json` |
+| `train` | `models/best_model.pkl` |
+| `evaluate` | `reports/metrics.json`, `reports/confusion_matrix.png`, `reports/roc_curve.png` |
 
-## Run Individual Steps
+View the latest metrics with:
 
-```bat
+```bash
+dvc metrics show
+```
+
+### Run individual steps
+
+```bash
 python src/data_ingestion.py --input data/raw/Churn_Prediction_DataSet.csv --report_out reports/data_quality_report.json
 python src/preprocessing.py --input data/raw/Churn_Prediction_DataSet.csv --outdir data/processed
 python src/train.py --train data/processed/train.csv --model_out models/best_model.pkl
 python src/evaluate.py --test data/processed/test.csv --model models/best_model.pkl --outdir reports
 ```
 
+## Results
+
+Three models are trained and compared. The best one is saved as `models/best_model.pkl`.
+
+| Model | Accuracy | Precision | Recall | F1 | ROC-AUC |
+|-------|----------|-----------|--------|----|---------|
+| Logistic Regression | _fill in_ | _fill in_ | _fill in_ | _fill in_ | _fill in_ |
+| Random Forest | _fill in_ | _fill in_ | _fill in_ | _fill in_ | _fill in_ |
+| XGBoost | _fill in_ | _fill in_ | _fill in_ | _fill in_ | _fill in_ |
+
+Fill in the numbers from `reports/metrics.json` and the MLflow UI.
+
+Per-model plots are in `reports/`:
+
+| Model | Confusion matrix | ROC curve |
+|-------|------------------|-----------|
+| Logistic Regression | ![](reports/LogisticRegression_confusion_matrix.png) | ![](reports/LogisticRegression_roc_curve.png) |
+| Random Forest | ![](reports/RandomForest_confusion_matrix.png) | ![](reports/RandomForest_roc_curve.png) |
+| XGBoost | ![](reports/XGBoost_confusion_matrix.png) | ![](reports/XGBoost_roc_curve.png) |
+
+## Experiment Tracking
+
+Training and evaluation log metrics, plots and models to MLflow. To browse runs locally:
+
+```bash
+mlflow ui
+```
+
+Then open http://localhost:5000.
+
 ## Run the API
 
-```bat
+The API needs the preprocessing artifacts and trained model in `models/`, so run the DVC pipeline first.
+
+```bash
 uvicorn api.main:app --reload
 ```
 
-Available endpoints:
+Endpoints:
 
-- `GET /health`
-- `POST /predict`
-- `GET /docs`
+- `GET /health` - service health check
+- `POST /predict` - churn prediction
+- `GET /docs` - interactive Swagger documentation
 
-Example prediction payload:
+Example request body for `POST /predict`:
 
 ```json
 {
@@ -108,26 +195,33 @@ Example prediction payload:
 }
 ```
 
+Test the running API with:
+
+```bash
+python test_api.py
+```
+
 ## Run the API with Docker
 
-```bat
+```bash
 docker build -f api/Dockerfile.api -t churn-api .
-docker run -p 8000:8000 churn-api
+docker run -p 8000:8000 --env-file .env churn-api
 ```
 
 ## Run Airflow
 
 From the `airflow/` directory:
 
-```bat
+```bash
 docker compose -f docker-compose.airflow.yml up
 ```
 
-The DAG ID is `churn_mlops_end_to_end`..
+The DAG ID is `churn_mlops_end_to_end`. Airflow runs the DVC stages from inside the mounted project directory.
+
+For local use only, the default Airflow login is `airflow` / `airflow`. Do not use these credentials or the default secret key in any deployed environment.
 
 ## Notes
 
 - The API expects the preprocessing artifacts and trained model to exist in `models/`.
-- Airflow runs the DVC stages from inside the mounted project directory.
-- MLflow artifacts are logged during training and evaluation.
-- hello world
+- Large files (datasets, `.pkl` models) are managed by DVC, not Git. Cloning the repo gives you the code and pipeline definition. You need the raw dataset to reproduce the results.
+- Copy `.env.example` to `.env` before running the API or Airflow.
