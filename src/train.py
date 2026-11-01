@@ -21,7 +21,6 @@ from sklearn.metrics import (
     roc_curve
 )
 
-
 def save_confusion_matrix(y_true, y_pred, out_path):
     cm = confusion_matrix(y_true, y_pred)
     plt.figure()
